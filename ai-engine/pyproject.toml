@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aiengine"
+version = "0.1.0"
+description = "Local AI engine (Ollama bridge) for the modular file manager"
+requires-python = ">=3.11"
+dependencies = []            # stdlib only: urllib + asyncio + tomllib
+
+[project.optional-dependencies]
+pdf   = ["pypdf>=4"]
+audio = ["faster-whisper>=1.0"]
+
+[project.scripts]
+fm-ai-engine = "aiengine.__main__:main"
+
+[tool.setuptools]
+packages = ["aiengine"]

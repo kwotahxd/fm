@@ -1,0 +1,35 @@
+# Local stack: Ollama + the AI engine, talking over a shared Unix-socket volume that the host's
+# `fm` binary also mounts (or points `[ai].socket_path` at directly).
+#
+#   docker compose -f docker/docker-compose.yml up -d
+#   docker compose -f docker/docker-compose.yml exec ollama ollama pull llama3
+#   docker compose -f docker/docker-compose.yml exec ollama ollama pull llava
+#   docker compose -f docker/docker-compose.yml exec ollama ollama pull nomic-embed-text
+#   fm --config config/config.toml status   # from the host, once the socket volume is mounted/shared
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama-models:/root/.ollama
+    ports:
+      - "11434:11434"          # exposed so the host-side `fm` (or a non-containerized engine) can reach it too
+    restart: unless-stopped
+
+  ai-engine:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.engine
+    depends_on:
+      - ollama
+    environment:
+      - FM_OLLAMA_URL=http://ollama:11434
+    volumes:
+      - ../config:/config:ro
+      - fm-sockets:/sockets
+      - ${FM_INDEX_DIR:-./data}:/data     # so the engine can read the same files the host indexes
+    restart: unless-stopped
+
+volumes:
+  ollama-models:
+  fm-sockets:

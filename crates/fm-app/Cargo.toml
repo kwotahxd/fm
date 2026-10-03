@@ -1,0 +1,18 @@
+[package]
+name = "fm-app"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+fm-types.workspace = true
+fm-config.workspace = true
+fm-core.workspace = true
+fm-db.workspace = true
+fm-ai.workspace = true
+fm-sorter.workspace = true
+fm-watcher.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

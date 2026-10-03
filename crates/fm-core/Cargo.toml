@@ -1,0 +1,12 @@
+[package]
+name = "fm-core"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+libc.workspace = true
+blake3.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

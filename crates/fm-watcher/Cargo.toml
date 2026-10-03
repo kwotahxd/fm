@@ -1,0 +1,12 @@
+[package]
+name = "fm-watcher"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+fm-core.workspace = true
+libc.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

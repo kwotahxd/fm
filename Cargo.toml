@@ -1,0 +1,38 @@
+[workspace]
+resolver = "2"
+members = ["crates/fm-types", "crates/fm-config", "crates/fm-core", "crates/fm-db", "crates/fm-sorter", "crates/fm-watcher", "crates/fm-ai", "crates/fm-app", "crates/fm-cli"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[workspace.dependencies]
+libc = "0.2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+thiserror = "1"
+anyhow = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+clap = { version = "4", features = ["derive"] }
+rusqlite = { version = "0.32", features = ["bundled"] }
+blake3 = "1"
+tempfile = "3"
+
+# internal crates
+fm-types = { path = "crates/fm-types" }
+fm-config = { path = "crates/fm-config" }
+fm-core = { path = "crates/fm-core" }
+fm-db = { path = "crates/fm-db" }
+fm-ai = { path = "crates/fm-ai" }
+fm-sorter = { path = "crates/fm-sorter" }
+fm-watcher = { path = "crates/fm-watcher" }
+fm-app = { path = "crates/fm-app" }
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+debug = false

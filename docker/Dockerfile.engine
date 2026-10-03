@@ -1,0 +1,20 @@
+# AI engine (Python) container. The Rust `fm` binary is meant to run on the host (it needs real
+# syscall access to the user's files); this image is only the Ollama bridge.
+FROM python:3.12-slim AS engine
+
+RUN apt-get update -qq && apt-get install -y --no-install-recommends poppler-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY ai-engine/pyproject.toml ./
+COPY ai-engine/aiengine ./aiengine
+RUN pip install --no-cache-dir . && pip install --no-cache-dir pypdf
+
+# same-user (UID-based) socket permissions: run as a fixed, non-root uid so a bind-mounted
+# socket directory is writable regardless of the host user.
+RUN useradd -u 1000 -m fm
+USER fm
+ENV FM_CONFIG=/config/config.toml
+VOLUME ["/config", "/sockets"]
+
+ENTRYPOINT ["python", "-m", "aiengine"]

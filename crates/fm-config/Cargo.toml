@@ -1,0 +1,10 @@
+[package]
+name = "fm-config"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde.workspace = true
+toml.workspace = true
+thiserror.workspace = true
+libc.workspace = true

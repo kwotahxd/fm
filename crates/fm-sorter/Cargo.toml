@@ -1,0 +1,13 @@
+[package]
+name = "fm-sorter"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+fm-types.workspace = true
+libc.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

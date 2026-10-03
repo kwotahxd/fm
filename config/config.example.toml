@@ -1,0 +1,47 @@
+# fm — example configuration.
+# Lookup order: `fm --config <path>` > $FM_CONFIG > ~/.config/fm/config.toml > built-in defaults.
+# Both the Rust binary (`fm`) and the Python AI engine (`python -m aiengine`) read this SAME file,
+# so socket path / models / Ollama URL only need to be set once, in [ai].
+
+[general]
+# tracing / logging filter. Examples: "info", "warn", "fm_core=debug,fm_app=info".
+# Overridden by --log-level on either side, and by $RUST_LOG for the Rust binary.
+log_level = "info"
+
+[database]
+backend = "sqlite"                        # "sqlite" (implemented) | "postgres" (extension point, see docs/architecture.md)
+path     = "~/.local/share/fm/index.db"   # sqlite file path
+# url    = "postgres://user:pass@localhost/fm"   # used only when backend = "postgres"
+
+[core]
+threads        = 0     # worker threads for directory walking; 0 = number of CPUs
+read_buffer_kb = 256   # getdents64() buffer size
+cache_entries  = 256   # directory listings kept in the in-memory metadata cache
+cache_ttl_ms   = 5000  # how long a cached listing is trusted before re-checking the directory's mtime
+
+[index]
+roots = ["~/Documents", "~/Downloads"]    # default roots for `fm watch` with no arguments
+blacklist_names = [".git", ".hg", ".svn", "node_modules", "target", "__pycache__", ".cache"]
+blacklist_globs = ["*.tmp", "*.swp", "*~"]
+blacklist_paths = ["/proc", "/sys", "/dev", "/run"]
+skip_hidden     = false
+max_analyze_mb  = 64    # files larger than this are indexed but never hashed or sent to the AI
+
+[ai]
+enabled            = true
+# socket_path      = "~/.local/state/fm/ai.sock"   # default: $XDG_RUNTIME_DIR/fm/ai.sock, else /tmp/fm-<uid>/ai.sock
+ollama_url         = "http://127.0.0.1:11434"
+text_model         = "llama3"             # text classification + natural-language rule parsing
+vision_model       = "llava"              # image classification (multimodal)
+embed_model        = "nomic-embed-text"   # embeddings for semantic search
+request_timeout_s  = 180
+concurrency        = 2                    # AI requests in flight at once (keep low on CPU-only Ollama)
+max_text_bytes     = 6000                 # bytes of file content sent to the model per file
+whisper_model      = ""                   # e.g. "base" — needs `pip install aiengine[audio]`; "" disables transcription
+
+[sort]
+default_conflict = "rename"    # rename | skip | fail
+
+[watch]
+debounce_ms   = 500     # quiet period after a burst of filesystem events before re-indexing
+auto_analyze  = false   # run AI analysis on changed files automatically while watching (needs [ai].enabled)
