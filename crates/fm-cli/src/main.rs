@@ -338,5 +338,5 @@ fn ctrlc_once(f: impl Fn() + Send + Sync + 'static) {
         }
         unsafe { libc::signal(libc::SIGINT, libc::SIG_DFL) };
     }
-    unsafe { libc::signal(libc::SIGINT, handler as libc::sighandler_t) };
+    unsafe { libc::signal(libc::SIGINT, handler as *const () as libc::sighandler_t) };
 }
